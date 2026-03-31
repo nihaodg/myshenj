@@ -22,6 +22,11 @@ const routes = [
     component: () => import('../views/Rules.vue')
   },
   {
+    path: '/topology',
+    name: 'TopologyEditor',
+    component: () => import('../views/TopologyEditor.vue')
+  },
+  {
     path: '/settings',
     name: 'Settings',
     component: () => import('../views/Settings.vue')
