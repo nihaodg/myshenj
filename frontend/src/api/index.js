@@ -82,4 +82,12 @@ export const defenseApi = {
   checkIP: (ip) => api.get(`/defense/check/${ip}`)
 }
 
+export const mitreApi = {
+  getTactics: () => api.get('/mitre/tactics'),
+  
+  getAllMappings: () => api.get('/mitre/all'),
+  
+  getTacticDetail: (tacticId) => api.get(`/mitre/tactics/${tacticId}`)
+}
+
 export default api

@@ -49,12 +49,7 @@
 
     <el-row :gutter="20" style="margin-top: 20px">
       <el-col :span="16">
-        <el-card>
-          <template #header>
-            <span>审计任务趋势</span>
-          </template>
-          <div ref="trendChartRef" style="height: 300px"></div>
-        </el-card>
+        <AuditTrend :tasks="auditStore.tasks" />
       </el-col>
       <el-col :span="8">
         <el-card>
@@ -105,10 +100,10 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useAuditStore } from '../store/audit'
+import AuditTrend from '../components/AuditTrend.vue'
 import * as echarts from 'echarts'
 
 const auditStore = useAuditStore()
-const trendChartRef = ref(null)
 const pieChartRef = ref(null)
 
 const statistics = computed(() => auditStore.statistics)
@@ -116,36 +111,7 @@ const recentTasks = computed(() => auditStore.tasks.slice(0, 5))
 
 onMounted(async () => {
   await auditStore.fetchStatistics()
-  await auditStore.fetchTasks({ limit: 5 })
-
-  if (trendChartRef.value) {
-    const trendChart = echarts.init(trendChartRef.value)
-    trendChart.setOption({
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['任务数', '问题数'] },
-      xAxis: {
-        type: 'category',
-        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-      },
-      yAxis: [{ type: 'value' }],
-      series: [
-        {
-          name: '任务数',
-          type: 'line',
-          data: [2, 4, 3, 5, 6, 7, 5],
-          smooth: true,
-          itemStyle: { color: '#409eff' }
-        },
-        {
-          name: '问题数',
-          type: 'line',
-          data: [5, 12, 8, 15, 20, 18, 25],
-          smooth: true,
-          itemStyle: { color: '#f56c6c' }
-        }
-      ]
-    })
-  }
+  await auditStore.fetchTasks({ limit: 30 })
 
   if (pieChartRef.value) {
     const pieChart = echarts.init(pieChartRef.value)
