@@ -12,6 +12,7 @@
           >
             <el-menu-item index="/">仪表盘</el-menu-item>
             <el-menu-item index="/audit">审计任务</el-menu-item>
+            <el-menu-item index="/quick">即时分析</el-menu-item>
             <el-menu-item index="/monitor">实时监控</el-menu-item>
             <el-menu-item index="/topology">拓扑编辑</el-menu-item>
             <el-menu-item index="/rules">规则管理</el-menu-item>

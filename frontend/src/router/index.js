@@ -12,6 +12,11 @@ const routes = [
     component: () => import('../views/Audit.vue')
   },
   {
+    path: '/quick',
+    name: 'QuickAudit',
+    component: () => import('../views/QuickAudit.vue')
+  },
+  {
     path: '/monitor',
     name: 'Monitor',
     component: () => import('../views/Monitor.vue')
