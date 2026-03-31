@@ -12,6 +12,11 @@ const routes = [
     component: () => import('../views/Audit.vue')
   },
   {
+    path: '/monitor',
+    name: 'Monitor',
+    component: () => import('../views/Monitor.vue')
+  },
+  {
     path: '/rules',
     name: 'Rules',
     component: () => import('../views/Rules.vue')

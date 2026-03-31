@@ -60,4 +60,26 @@ export const settingsApi = {
   updateSettings: (data) => api.put('/settings', data)
 }
 
+export const alertsApi = {
+  getAlerts: (limit = 100) => api.get(`/alerts?limit=${limit}`),
+  
+  getAlertStats: () => api.get('/alerts/stats'),
+  
+  updateConfig: (config) => api.post('/alerts/config', config),
+  
+  testAlert: () => api.post('/alerts/test')
+}
+
+export const defenseApi = {
+  blockIP: (ip, reason, duration) => 
+    api.post('/defense/block', { ip_address: ip, reason, duration_hours: duration }),
+  
+  unblockIP: (ip) => 
+    api.post('/defense/unblock', { ip_address: ip }),
+  
+  getBlocked: () => api.get('/defense/blocked'),
+  
+  checkIP: (ip) => api.get(`/defense/check/${ip}`)
+}
+
 export default api

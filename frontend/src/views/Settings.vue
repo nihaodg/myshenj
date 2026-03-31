@@ -59,6 +59,40 @@
           <div class="form-tip">当 AI 调用失败时，自动切换到特征匹配模式</div>
         </el-form-item>
 
+        <el-divider content-position="left">告警设置</el-divider>
+
+        <el-form-item label="Web 通知">
+          <el-switch v-model="alertForm.web_notification" />
+        </el-form-item>
+
+        <el-form-item label="邮件通知">
+          <el-switch v-model="alertForm.email_notification" />
+        </el-form-item>
+
+        <el-form-item label="邮件接收人" v-if="alertForm.email_notification">
+          <el-input v-model="alertForm.email_recipients" placeholder="多个邮箱用逗号分隔" />
+        </el-form-item>
+
+        <el-form-item label="SMTP 服务器" v-if="alertForm.email_notification">
+          <el-input v-model="alertForm.smtp_server" placeholder="smtp.gmail.com" />
+        </el-form-item>
+
+        <el-form-item label="最低告警级别">
+          <el-select v-model="alertForm.min_severity" style="width: 100%">
+            <el-option label="Low" value="low" />
+            <el-option label="Medium" value="medium" />
+            <el-option label="High" value="high" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="企业微信Webhook">
+          <el-input v-model="alertForm.webhook_url" placeholder="可选，用于接收告警通知" />
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="info" @click="testAlert" :loading="testing">发送测试告警</el-button>
+        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" @click="handleSave" :loading="saving">保存设置</el-button>
           <el-button @click="fetchSettings">重置</el-button>
@@ -84,7 +118,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { settingsApi } from '../api'
+import { settingsApi, alertsApi } from '../api'
 
 const settingsForm = reactive({
   AI_PROVIDER: 'openai',
@@ -96,7 +130,18 @@ const settingsForm = reactive({
   AUTO_FALLBACK: true
 })
 
+const alertForm = reactive({
+  web_notification: true,
+  email_notification: false,
+  email_recipients: '',
+  smtp_server: '',
+  min_severity: 'medium',
+  webhook_url: '',
+  webhook_enabled: false
+})
+
 const saving = ref(false)
+const testing = ref(false)
 
 onMounted(() => {
   fetchSettings()
@@ -123,11 +168,24 @@ const handleSave = async () => {
   saving.value = true
   try {
     await settingsApi.updateSettings(settingsForm)
+    await alertsApi.updateConfig(alertForm)
     ElMessage.success('设置保存成功')
   } catch (error) {
     ElMessage.error('保存失败')
   } finally {
     saving.value = false
+  }
+}
+
+const testAlert = async () => {
+  testing.value = true
+  try {
+    await alertsApi.testAlert()
+    ElMessage.success('测试告警已发送')
+  } catch (error) {
+    ElMessage.error('发送失败')
+  } finally {
+    testing.value = false
   }
 }
 </script>

@@ -43,3 +43,17 @@ class Issue(Base):
 
     def __repr__(self):
         return f"<Issue(id={self.id}, title='{self.title}', severity='{self.severity}')>"
+
+
+class BlockedIP(Base):
+    __tablename__ = "blocked_ips"
+
+    id = Column(Integer, primary_key=True, index=True)
+    ip_address = Column(String(45), unique=True, nullable=False, index=True)
+    reason = Column(Text, nullable=True)
+    blocked_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=True)
+    is_active = Column(Boolean, default=True)
+
+    def __repr__(self):
+        return f"<BlockedIP(ip='{self.ip_address}', active={self.is_active})>"
