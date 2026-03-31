@@ -10,14 +10,18 @@
 
         <el-form-item label="AI 提供商">
           <el-select v-model="settingsForm.AI_PROVIDER" style="width: 100%">
-            <el-option label="OpenAI" value="openai" />
+            <el-option label="OpenAI (GPT-4/3.5)" value="openai" />
+            <el-option label="Claude (Anthropic)" value="anthropic" />
             <el-option label="本地 Ollama" value="ollama" />
-            <el-option label="智谱 AI" value="zhipu" />
+            <el-option label="智谱 AI (GLM)" value="zhipu" />
+            <el-option label="OpenRouter (中转)" value="openrouter" />
+            <el-option label="OpenAI 兼容 (中转)" value="compatible" />
           </el-select>
         </el-form-item>
 
         <el-form-item label="API 地址">
           <el-input v-model="settingsForm.AI_BASE_URL" placeholder="https://api.openai.com/v1" />
+          <div class="form-tip">中转站请填入中转API地址，如 https://api.openai.com/v1</div>
         </el-form-item>
 
         <el-form-item label="API 密钥">
@@ -25,12 +29,17 @@
             v-model="settingsForm.AI_API_KEY"
             type="password"
             show-password
-            placeholder="sk-..."
+            placeholder="sk-... 或 claude-..."
           />
         </el-form-item>
 
         <el-form-item label="模型名称">
-          <el-input v-model="settingsForm.AI_MODEL" placeholder="gpt-4" />
+          <el-input v-model="settingsForm.AI_MODEL" placeholder="gpt-4 / claude-3-sonnet-20240229" />
+          <div class="form-tip">
+            OpenAI: gpt-4, gpt-3.5-turbo<br>
+            Claude: claude-3-sonnet-20240229, claude-3-opus-20240229<br>
+            Ollama: llama3, qwen2, mistral
+          </div>
         </el-form-item>
 
         <el-divider content-position="left">代理设置</el-divider>

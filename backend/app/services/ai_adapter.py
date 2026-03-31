@@ -19,6 +19,12 @@ class AIAdapter:
             return await self._analyze_ollama(prompt, model)
         elif self.provider == "zhipu":
             return await self._analyze_zhipu(prompt, model)
+        elif self.provider == "anthropic":
+            return await self._analyze_anthropic(prompt, model)
+        elif self.provider == "openrouter":
+            return await self._analyze_openai(prompt, model)
+        elif self.provider == "compatible":
+            return await self._analyze_openai(prompt, model)
         else:
             raise ValueError(f"Unsupported AI provider: {self.provider}")
 
@@ -95,6 +101,36 @@ class AIAdapter:
                 raise TimeoutError("Zhipu AI request timed out")
             except Exception as e:
                 raise RuntimeError(f"Zhipu AI error: {str(e)}")
+
+    async def _analyze_anthropic(self, prompt: str, model: Optional[str] = None) -> str:
+        model = model or "claude-3-sonnet-20240229"
+
+        headers = {
+            "x-api-key": self.api_key,
+            "Content-Type": "application/json",
+            "anthropic-version": "2023-06-01"
+        }
+
+        payload = {
+            "model": model,
+            "max_tokens": 4096,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            try:
+                response = await client.post(
+                    "https://api.anthropic.com/v1/messages",
+                    headers=headers,
+                    json=payload
+                )
+                response.raise_for_status()
+                data = response.json()
+                return data["content"][0]["text"]
+            except httpx.TimeoutException:
+                raise TimeoutError("Anthropic request timed out")
+            except Exception as e:
+                raise RuntimeError(f"Anthropic API error: {str(e)}")
 
     async def analyze_json(self, prompt: str, model: Optional[str] = None) -> Dict[str, Any]:
         try:
