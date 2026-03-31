@@ -1,0 +1,72 @@
+# 示例安全审计规则
+# 复制到规则管理页面导入，或直接在数据库中导入
+
+- id: SQLI-001
+  name: SQL注入检测 (Python)
+  severity: high
+  language: python
+  pattern: "(?i)(cursor\\.execute|executemany)\\s*\\([^)]*%s"
+  message: "检测到使用 %s 占位的SQL查询，请使用参数化查询"
+
+- id: SQLI-002
+  name: SQL注入检测 (通用)
+  severity: high
+  language: 
+  pattern: "(?i)(exec|execute)\\s*\\(.*?(?:select|insert|update|delete)\\s*"
+  message: "检测到使用字符串拼接执行SQL语句，可能导致SQL注入"
+
+- id: HARDCODED-001
+  name: 硬编码密钥检测
+  severity: high
+  language: 
+  pattern: "(?i)(api[_-]?key|secret[_-]?key|access[_-]?token|auth[_-]?token)\\s*=\\s*[\"'][a-zA-Z0-9]{16,}"
+  message: "检测到硬编码的密钥，请使用环境变量"
+
+- id: DANGER-001
+  name: eval使用检测
+  severity: high
+  language: javascript
+  pattern: "\\beval\\s*\\("
+  message: "检测到eval使用，可能存在代码注入风险"
+
+- id: DANGER-002
+  name: innerHTML使用检测
+  severity: medium
+  language: javascript
+  pattern: "\\.innerHTML\\s*="
+  message: "检测到innerHTML使用，可能存在XSS风险"
+
+- id: INSECURE-001
+  name: 不安全的随机数
+  severity: medium
+  language: python
+  pattern: "random\\.(random|randint|choice)\\s*\\("
+  message: "检测到使用random模块生成安全敏感数据，请使用secrets模块"
+
+- id: PASSWORD-001
+  name: 硬编码密码检测
+  severity: critical
+  language: 
+  pattern: "(?i)(password|passwd|pwd)\\s*=\\s*[\"'][^\"']{4,}"
+  message: "检测到硬编码密码，请使用环境变量或配置中心"
+
+- id: LOG-INJECT-001
+  name: 日志注入检测
+  severity: medium
+  language: 
+  pattern: "(?i)(log|logger|print)\\s*\\(.*?(?:\\\\n|\\\\r|%0a|%0d)"
+  message: "检测到可能存在日志注入风险"
+
+- id: PATH-TRAV-001
+  name: 路径遍历检测
+  severity: high
+  language: python
+  pattern: "open\\s*\\([^)]*\\+\\s*(request\\.|os\\.path\\.)"
+  message: "检测到可能的路径遍历漏洞，请验证用户输入"
+
+- id: CMD-INJ-001
+  name: 命令注入检测
+  severity: critical
+  language: python
+  pattern: "os\\.system\\s*\\(|subprocess\\.\\w+\\s*\\([^)]*shell\\s*=\\s*True"
+  message: "检测到可能的命令注入漏洞，请避免使用shell=True"
